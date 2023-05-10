@@ -33,8 +33,8 @@
 
 #define DATA_PIN        6
 //#define BRIGHTNESS      50
-#define NUM_LEDS        50 
-
+#define NUM_LEDS        200
+#define NMILLISECONDS   5
 
 
 // creating the led array
@@ -147,7 +147,7 @@ void loop() {
   float blue = CRGB::Blue;
 
 
-    EVERY_N_MILLISECONDS(50)  {
+    EVERY_N_MILLISECONDS(NMILLISECONDS)  {
       // switch on an LED at random, choosing a random color from the palette
       leds[random8(0, NUM_LEDS - 1)] = ColorFromPalette(stJean, random8(), 255, LINEARBLEND);
     }
