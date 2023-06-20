@@ -18,9 +18,9 @@
 
 #include <FastLED.h>
 
-#define LED_TYPE        WS2812
+#define LED_TYPE        WS2812B
 #define COLOR_ORDER     GRB
-#define DATA_PIN        6
+#define DATA_PIN        2
 #define NUM_LEDS        200
 
 unsigned long n_milliseconds = 5;
@@ -54,7 +54,7 @@ CRGBPalette16 heat_palette = heatmap_gp;
 // ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
   
-    Serial.begin(115200);
+    Serial.begin(57600);
     
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 50);
     FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);  
@@ -62,10 +62,10 @@ void setup() {
     FastLED.setCorrection(UncorrectedColor);
     FastLED.setTemperature(DirectSunlight);
 
-    // Fill the colorIndex array with random numbers
-    for (int i = 0; i < NUM_LEDS; i++)  {
-      colorIndex[i] = random8();
-    }
+//    // Fill the colorIndex array with random numbers
+//    for (int i = 0; i < NUM_LEDS; i++)  {
+//      colorIndex[i] = random8();
+//    }
     
     delay(1000);
 }
@@ -82,5 +82,8 @@ void loop() {
     // Fade all LEDS down by 1 in brightness each time this is called
     fadeToBlackBy(leds, NUM_LEDS, 1);
 
+//    for (int i = 0; i < NUM_LEDS; i++)  {
+//      leds[i] = CRGB::Red;
+//    }
     FastLED.show(); 
 }
