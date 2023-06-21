@@ -20,8 +20,8 @@
 
 #define LED_TYPE        WS2812B
 #define COLOR_ORDER     GRB
-#define DATA_PIN        2
-#define NUM_LEDS        200
+#define DATA_PIN        3
+#define NUM_LEDS        137
 
 unsigned long n_milliseconds = 5;
 uint8_t brightness = 50;
@@ -82,8 +82,5 @@ void loop() {
     // Fade all LEDS down by 1 in brightness each time this is called
     fadeToBlackBy(leds, NUM_LEDS, 1);
 
-//    for (int i = 0; i < NUM_LEDS; i++)  {
-//      leds[i] = CRGB::Red;
-//    }
     FastLED.show(); 
 }
