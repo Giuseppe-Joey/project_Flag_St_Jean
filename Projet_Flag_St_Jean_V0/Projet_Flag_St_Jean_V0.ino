@@ -21,7 +21,7 @@
 #define LED_TYPE        WS2812B
 #define COLOR_ORDER     GRB
 #define DATA_PIN        3
-#define NUM_LEDS        137
+#define NUM_LEDS        200
 
 unsigned long n_milliseconds = 5;
 uint8_t brightness = 50;
@@ -56,7 +56,7 @@ void setup() {
   
     Serial.begin(57600);
     
-    FastLED.setMaxPowerInVoltsAndMilliamps(5, 50);
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 100);
     FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);  
     FastLED.setBrightness(brightness);
     FastLED.setCorrection(UncorrectedColor);

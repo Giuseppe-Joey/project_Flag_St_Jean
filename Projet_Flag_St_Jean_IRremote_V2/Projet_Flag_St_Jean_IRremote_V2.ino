@@ -82,7 +82,7 @@ String choice_palette_string = "St-Jean OLD";
 void setup() {
   
     Serial.begin(9600);
-    Serial.println("Initialization...");
+//    Serial.println("Initialization...");
     
     irrecv.enableIRIn();
     irrecv.blink13(true);
@@ -117,6 +117,7 @@ void loop() {
     lastCode = results.value;     // store received code from remote
     irrecv.resume();              // Receive the next value
     IRremote_switch_case();       // recognize button pressed on IRremote
+    //delay(10);
   }
    
 
@@ -140,7 +141,7 @@ void loop() {
     Serial.print("Run Time: ");
     Serial.print(millis() / 1000);
     Serial.print(" s;       ");
-    
+//    
     Serial.print("IR: ");
     Serial.print(lastCode, HEX);   
     
@@ -172,19 +173,19 @@ void IRremote_switch_case() {
       // ***** FIRST ROW *****
       // CH- button
       case 0xFFA25D:
-        Serial.println("CH- button pressed!");
+//        Serial.println("CH- button pressed!");
         n_milliseconds = 1;
       break;
   
       // CH button
       case 0xFF629D:
-        Serial.println("CH button pressed!");
+//        Serial.println("CH button pressed!");
         n_milliseconds = 5;
       break;
   
       // CH+ button
       case 0xFFE21D:
-        Serial.println("CH+ button pressed!");
+//        Serial.println("CH+ button pressed!");
         n_milliseconds = 10;
       break;
 
@@ -193,17 +194,17 @@ void IRremote_switch_case() {
       // ***** SECOND ROW *****
       // PREV button
       case 0xFF22DD:
-        Serial.println("PREV button pressed!");
+//        Serial.println("PREV button pressed!");
       break;
   
       // NEXT button
       case 0xFF02FD:
-        Serial.println("NEXT button pressed!");
+//        Serial.println("NEXT button pressed!");
       break;
   
       // PLAY/PAUSE button
       case 0xFFC23D:
-        Serial.println("PLAY/PAUSE button pressed!");
+//        Serial.println("PLAY/PAUSE button pressed!");
       break;
   
 
@@ -211,7 +212,7 @@ void IRremote_switch_case() {
       // ***** THIRD ROW *****
       // VOL- button
       case 0xFFE01F:
-        Serial.println("VOL- button pressed!");
+//        Serial.println("VOL- button pressed!");
         if (brightness > 20)
           brightness = brightness - 5;
         else if ((brightness <= 20) && (brightness >= 2))
@@ -222,7 +223,7 @@ void IRremote_switch_case() {
   
       // VOL+ button
       case 0xFFA857:
-        Serial.println("VOL+ button pressed!");
+//        Serial.println("VOL+ button pressed!");
         if (brightness < 240)
           brightness = brightness + 5;
         else if ((brightness >= 240) && (brightness <= 253))
@@ -233,7 +234,7 @@ void IRremote_switch_case() {
   
       // EQ button
       case 0xFF906F:
-        Serial.println("EQ button pressed!");
+//        Serial.println("EQ button pressed!");
         brightness = 50;
       break;
 
@@ -242,20 +243,20 @@ void IRremote_switch_case() {
       // ***** FOURTH ROW *****
       // 0 button
       case 0xFF6897:
-        Serial.println("0 button pressed!");
+//        Serial.println("0 button pressed!");
         choice_palette = stJeanOLD_palette;
         choice_palette_string = "St-Jean OLD";
       break;
   
       // 100+ button
       case 0xFF9867:
-        Serial.println("100+ button pressed!");    
+//        Serial.println("100+ button pressed!");    
         n_milliseconds = 25; 
       break;
   
       // 200+ button
       case 0xFFB04F:
-        Serial.println("200+ button pressed!");
+//        Serial.println("200+ button pressed!");
         n_milliseconds = 50;
       break;
 
@@ -264,21 +265,21 @@ void IRremote_switch_case() {
       // ***** FIFTH ROW *****
       // 1 button
       case 0xFF30CF:
-        Serial.println("1 button pressed!");
+//        Serial.println("1 button pressed!");
         choice_palette = heat_palette;
         choice_palette_string = "Heat";
       break;
   
       // 2 button
       case 0xFF18E7:
-        Serial.println("2 button pressed!");
+//        Serial.println("2 button pressed!");
         choice_palette = red2blue_palette;
         choice_palette_string = "Red to Blue";
       break;
   
       // 3 button
       case 0xFF7A85:
-        Serial.println("3 button pressed!");
+//        Serial.println("3 button pressed!");
         choice_palette = green420_palette;
         choice_palette_string = "Green 420";      
       break;
@@ -288,17 +289,17 @@ void IRremote_switch_case() {
       // ***** SIXTH ROW *****
       // 4 button
       case 0xFF10EF:
-        Serial.println("4 button pressed!");
+//        Serial.println("4 button pressed!");
       break;
   
       // 5 button
       case 0xFF38C7:      
-        Serial.println("5 button pressed!");
+//        Serial.println("5 button pressed!");
       break;
   
       // 6 button
       case 0xFF5AA5:
-        Serial.println("6 button pressed!");
+//        Serial.println("6 button pressed!");
       break;
 
 
@@ -307,17 +308,17 @@ void IRremote_switch_case() {
       // ***** SEVENTH ROW *****
       // 7 button
       case 0xFF42BD:
-        Serial.println("7 button pressed!");
+//        Serial.println("7 button pressed!");
       break;
   
       // 8 button
       case 0xFF4AB5:
-        Serial.println("8 button pressed!");
+//        Serial.println("8 button pressed!");
       break;
   
       // 9 button
       case 0xFF52AD:
-        Serial.println("9 button pressed!");
+//        Serial.println("9 button pressed!");
       break;
       }
 }
