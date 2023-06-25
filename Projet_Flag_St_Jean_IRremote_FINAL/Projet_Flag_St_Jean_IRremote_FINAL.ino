@@ -1,6 +1,6 @@
 /*
    Created on     :   Mai 4, 2023
-   Last Update    :   Juin 20, 2023
+   Last Update    :   Juin 22, 2023
 
    Program Name   :
    Program File   :   Projet_Flag_St_Jean.ino
@@ -31,7 +31,9 @@ uint8_t brightness = 50;            // nominal leds brightness
 unsigned long n_milliseconds = 5;   // nominal leds switching speed
 unsigned long lastCode;             //store the last IR code received from remote
 
+const int RESET_PIN = 6;          // connected to reset pin and used to reset arduino
 const int RECV_PIN = 2;           //IR remote controll receiver pin
+const int RECV_LED_PIN = 5;       // led used to show if a good code is received from IR remote
 IRrecv irrecv(RECV_PIN);
 decode_results results;
 
@@ -65,6 +67,33 @@ DEFINE_GRADIENT_PALETTE( green420_gp )  {
     255,    255,   255,    255,        //white
 };
 
+DEFINE_GRADIENT_PALETTE( white_gp )  {
+      0,    255,    255,    255,        //white
+      46,      255,      255,    255,        //white
+   179,   255,      255,    255,        //white
+    255,    255,   255,    255,        //white
+};
+
+DEFINE_GRADIENT_PALETTE( red_gp )  {
+      0,    255,    0,    0,        //red
+      46,      255,      0,    0,        //red
+   179,   255,      0,    0,        //red
+    255,    255,   0,    0,        //red
+};
+
+DEFINE_GRADIENT_PALETTE( blue_gp )  {
+      0,    0,    0,    255,        //blue
+      46,      0,      0,    255,        //blue
+   179,   0,      0,    255,        //blue
+    255,    0,   0,    255,        //blue
+};
+
+DEFINE_GRADIENT_PALETTE( green_gp )  {
+      0,    0,    255,    0,        //green
+      46,      0,      255,    0,        //green
+   179,   0,      255,    0,        //green
+    255,    0,   255,    0,        //green
+};
 
 
 // creating palettes
@@ -72,6 +101,10 @@ CRGBPalette16 stJeanOLD_palette = stjeanOLD_gp;
 CRGBPalette16 heat_palette = heatmap_gp;
 CRGBPalette16 red2blue_palette = red2blue_gp;
 CRGBPalette16 green420_palette = green420_gp;
+CRGBPalette16 white_palette = white_gp;
+CRGBPalette16 red_palette = red_gp;
+CRGBPalette16 blue_palette = blue_gp;
+CRGBPalette16 green_palette = green_gp;
 
 CRGBPalette16 choice_palette = stJeanOLD_palette;
 String choice_palette_string = "St-Jean OLD";
@@ -86,14 +119,21 @@ void setup() {
     
     irrecv.enableIRIn();
     irrecv.blink13(true);
-    
-    FastLED.setMaxPowerInVoltsAndMilliamps(5, 50);
+
+    // if milliamps is over 500, the noise is too big and it create evil mode bugs!!!
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);  
     FastLED.setBrightness(brightness);
     FastLED.setCorrection(UncorrectedColor);
     FastLED.setTemperature(DirectSunlight);
 
-    delay(2000);
+    pinMode(RECV_LED_PIN, OUTPUT);   
+    digitalWrite(RECV_LED_PIN, LOW);
+
+    digitalWrite(RESET_PIN, HIGH);      // this line has to be before the pinMode() line to work
+    pinMode(RESET_PIN, OUTPUT);   
+
+    delay(3000);
 }
 
 
@@ -106,6 +146,9 @@ void setup() {
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
+
+    digitalWrite(RECV_LED_PIN, LOW);
+    digitalWrite(RESET_PIN, HIGH);
 
 
   // reading the IR receiver
@@ -158,8 +201,8 @@ void loop() {
 
 
 
-
-
+// declaring a reset function
+void(* resetFunc) (void) = 0;
 
 
 
@@ -173,18 +216,21 @@ void IRremote_switch_case() {
       // CH- button
       case 0xFFA25D:
         Serial.println("CH- button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         n_milliseconds = 1;
       break;
   
       // CH button
       case 0xFF629D:
         Serial.println("CH button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         n_milliseconds = 5;
       break;
   
       // CH+ button
       case 0xFFE21D:
         Serial.println("CH+ button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);        
         n_milliseconds = 10;
       break;
 
@@ -194,16 +240,19 @@ void IRremote_switch_case() {
       // PREV button
       case 0xFF22DD:
         Serial.println("PREV button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);        
       break;
   
       // NEXT button
       case 0xFF02FD:
         Serial.println("NEXT button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
       break;
   
       // PLAY/PAUSE button
       case 0xFFC23D:
         Serial.println("PLAY/PAUSE button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);       
       break;
   
 
@@ -212,6 +261,7 @@ void IRremote_switch_case() {
       // VOL- button
       case 0xFFE01F:
         Serial.println("VOL- button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         if (brightness > 20)
           brightness = brightness - 5;
         else if ((brightness <= 20) && (brightness >= 2))
@@ -223,6 +273,7 @@ void IRremote_switch_case() {
       // VOL+ button
       case 0xFFA857:
         Serial.println("VOL+ button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         if (brightness < 240)
           brightness = brightness + 5;
         else if ((brightness >= 240) && (brightness <= 253))
@@ -234,6 +285,7 @@ void IRremote_switch_case() {
       // EQ button
       case 0xFF906F:
         Serial.println("EQ button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         brightness = 50;
       break;
 
@@ -243,19 +295,22 @@ void IRremote_switch_case() {
       // 0 button
       case 0xFF6897:
         Serial.println("0 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         choice_palette = stJeanOLD_palette;
         choice_palette_string = "St-Jean OLD";
       break;
   
       // 100+ button
       case 0xFF9867:
-        Serial.println("100+ button pressed!");    
+        Serial.println("100+ button pressed!"); 
+        digitalWrite(RECV_LED_PIN, HIGH);   
         n_milliseconds = 25; 
       break;
   
       // 200+ button
       case 0xFFB04F:
         Serial.println("200+ button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         n_milliseconds = 50;
       break;
 
@@ -265,6 +320,7 @@ void IRremote_switch_case() {
       // 1 button
       case 0xFF30CF:
         Serial.println("1 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         choice_palette = heat_palette;
         choice_palette_string = "Heat";
       break;
@@ -272,6 +328,7 @@ void IRremote_switch_case() {
       // 2 button
       case 0xFF18E7:
         Serial.println("2 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         choice_palette = red2blue_palette;
         choice_palette_string = "Red to Blue";
       break;
@@ -279,6 +336,7 @@ void IRremote_switch_case() {
       // 3 button
       case 0xFF7A85:
         Serial.println("3 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
         choice_palette = green420_palette;
         choice_palette_string = "Green 420";      
       break;
@@ -289,16 +347,25 @@ void IRremote_switch_case() {
       // 4 button
       case 0xFF10EF:
         Serial.println("4 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
+        choice_palette = white_palette;
+        choice_palette_string = "White";  
       break;
   
       // 5 button
       case 0xFF38C7:      
         Serial.println("5 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
+        choice_palette = red_palette;
+        choice_palette_string = "Red";          
       break;
   
       // 6 button
       case 0xFF5AA5:
         Serial.println("6 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
+        choice_palette = blue_palette;
+        choice_palette_string = "Blue"; 
       break;
 
 
@@ -308,16 +375,23 @@ void IRremote_switch_case() {
       // 7 button
       case 0xFF42BD:
         Serial.println("7 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
+        choice_palette = green_palette;
+        choice_palette_string = "Green";         
       break;
   
       // 8 button
       case 0xFF4AB5:
         Serial.println("8 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
       break;
   
       // 9 button
       case 0xFF52AD:
         Serial.println("9 button pressed!");
+        digitalWrite(RECV_LED_PIN, HIGH);
+        //resetFunc(); //reset the Arduino
+        digitalWrite(RESET_PIN, LOW);
       break;
       }
 }
